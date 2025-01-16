@@ -1,3 +1,8 @@
+// src/store/taskSlice.js
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+// Thunk actions
 const API_URL = process.env.REACT_APP_API_URL || '';
 
 export const fetchTasks = createAsyncThunk(
@@ -31,3 +36,67 @@ export const deleteTask = createAsyncThunk(
     return id;
   }
 );
+
+const taskSlice = createSlice({
+  name: 'tasks',
+  initialState: {
+    items: [],
+    status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+    error: null,
+    currentPage: 1,
+    hasMore: true,
+    filter: 'all',
+    sidebarOpen: false
+  },
+  reducers: {
+    setFilter: (state, action) => {
+      state.filter = action.payload;
+    },
+    toggleSidebar: (state) => {
+      state.sidebarOpen = !state.sidebarOpen;
+    }
+  },
+  extraReducers: (builder) => {
+    builder
+      // Fetch Tasks
+      .addCase(fetchTasks.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchTasks.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        if (state.currentPage === 1) {
+          state.items = action.payload;
+        } else {
+          state.items = [...state.items, ...action.payload];
+        }
+        state.hasMore = action.payload.length === 10;
+        state.currentPage += 1;
+        state.error = null;
+      })
+      .addCase(fetchTasks.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      
+      // Add Task
+      .addCase(addTask.fulfilled, (state, action) => {
+        state.items.unshift(action.payload);
+      })
+      
+      // Complete Task
+      .addCase(completeTask.fulfilled, (state, action) => {
+        const task = state.items.find(task => task._id === action.payload._id);
+        if (task) {
+          task.completed = true;
+        }
+      })
+      
+      // Delete Task
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        state.items = state.items.filter(task => task._id !== action.payload);
+      });
+  }
+});
+
+export const { setFilter, toggleSidebar } = taskSlice.actions;
+export default taskSlice.reducer;
