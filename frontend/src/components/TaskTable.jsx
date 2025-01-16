@@ -28,21 +28,21 @@ const TaskTable = () => {
   }
 
   return (
-    <div className="overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
+    <div className="w-full">
+      <div className="block w-full overflow-x-auto">
+        <table className="w-full divide-y divide-gray-200">
           <thead>
             <tr className="bg-gray-50">
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-full sm:w-auto">
                 Task
               </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                 Due Date
               </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                 Status
               </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -50,22 +50,26 @@ const TaskTable = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {filteredTasks.map(task => (
               <tr key={task._id} className="hover:bg-gray-50">
-                <td className="px-6 py-4">
-                  <div>
+                <td className="px-4 sm:px-6 py-4">
+                  <div className="flex flex-col">
                     <div className="text-sm font-medium text-gray-900">{task.title}</div>
                     {task.description && (
                       <div className="text-sm text-gray-500 mt-1">{task.description}</div>
                     )}
+                    <div className="sm:hidden text-xs text-gray-500 mt-1">
+                      <Clock className="w-3 h-3 inline mr-1" />
+                      {new Date(task.dueDate).toLocaleDateString()}
+                    </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="hidden sm:table-cell px-6 py-4">
                   <div className="flex items-center text-sm text-gray-600">
                     <Clock className="w-4 h-4 mr-2" />
                     {new Date(task.dueDate).toLocaleDateString()}
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                <td className="px-4 sm:px-6 py-4">
+                  <span className={`inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium
                     ${task.completed 
                       ? 'bg-green-100 text-green-800' 
                       : 'bg-yellow-100 text-yellow-800'
@@ -73,8 +77,8 @@ const TaskTable = () => {
                     {task.completed ? 'Completed' : 'Pending'}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div className="flex space-x-3">
+                <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <div className="flex space-x-2 sm:space-x-3">
                     {!task.completed && (
                       <button
                         onClick={() => dispatch(completeTask(task._id))}
