@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import { fetchTasks } from '../store/taskSlice';
 import Sidebar from './Sidebar';
 import TaskTable from './TaskTable';
-import TaskForm from './TaskForm';
 import TaskHeader from './TaskHeader';
 
 const TaskManager = () => {
